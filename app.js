@@ -3,8 +3,6 @@ const express = require('express');
 const app = express();
 const createError = require('http-errors');
 
-const userRoute = require("./routes/userRoute")
-
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', 'false')
 
@@ -23,7 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 // Rotas da aplicação
+const userRoute = require("./routes/userRoute");
+const todoRoute = require('./routes/todoRoute');
+
 app.use('/user', userRoute)
+app.use('/todo', todoRoute)
 
 // cria erro 404 quando rota não é encontrada
 app.use(function(req, res, next) {

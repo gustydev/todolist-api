@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
 const { body } = require('express-validator');
+
 const { validateInputs } = require('../middlewares/validateInputs');
+// Middleware para retornar erro se houver algum dado inválido na entrada de usuário
 
 exports.register = [
     // Validar entradas do usuário com express validator

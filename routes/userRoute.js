@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const controller = require('../controllers/userController')
+
 const { validateToken } = require('../middlewares/validateToken')
-const { validateInputs } = require("../middlewares/validateInputs")
+// Middleware usado pra validar usuário e colocar seus dados na request
 
 // Registra usuário
 router.post('/register', controller.register);
