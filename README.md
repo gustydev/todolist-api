@@ -61,8 +61,8 @@ A aplicação utiliza variáveis de ambiente configuradas no arquivo `.env`. Aqu
 
 1. **Clone o repositório:**
    ```bash
-   git clone [URL_DO_REPOSITORIO]
-   cd [NOME_DO_REPOSITORIO]
+   git clone https://github.com/gustydev/todolist-api.git
+   cd todolist-api
    ```
 
 2. **Instale as dependências:**
@@ -105,8 +105,6 @@ A aplicação utiliza variáveis de ambiente configuradas no arquivo `.env`. Aqu
 5. **LGPD**:
    - Senhas são armazenadas com hash.
    - Dados sensíveis não são retornados (ex.: senha omitida nas listagens).
-6. **GitHub**:
-   - O código deve ser hospedado em um repositório público e configurado conforme as instruções do projeto.
 
 ---
 
