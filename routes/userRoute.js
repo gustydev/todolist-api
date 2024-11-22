@@ -123,4 +123,68 @@ router.post('/login', [
     }
 ])
 
+// Lista de usuários existentes
+router.get('/list', async(req, res, next) => {
+    try {
+        const users = await User.find().select('-password -todos');
+        // Omite ambas as senhas e os todos de usuários (privacidade)
+
+        return res.status(200).json(users)
+    } catch (err) {
+        next(err)
+    }
+})
+
+// Editar usuário (requer autorização, apenas o próprio usuário pode editar seu nome)
+router.put('/', [
+    body('username')
+    .isString()
+    .withMessage('Nome de usuário precisa ser uma string')
+    .trim()
+    .isLength({min: 4, max: 30})
+    .withMessage('Nome de usuário precisa ter entre 4 e 30 caracteres')
+    .custom(async (value) => {
+        const user = await User.findOne({username: value})
+        if (user) {
+            throw new Error('Nome de usuário indisponível, por favor tentar outro.')
+        } 
+    }),
+
+    async(req, res, next) => {
+        try {
+            const token = req.headers['authorization']?.split(' ')[1];
+            // Extrai o token da header Authorization
+
+            if (!token) return next('Token inválido')
+            // Se for inválido retornar erro
+
+            let editedUser;
+            jwt.verify(token, process.env.SECRET, (err, user) => {
+                if (err) {
+                    return next(err)
+                }
+                editedUser = user;
+            })
+
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty) {
+                const error = new Error('Falha ao validar entradas de usuário')
+                error.statusCode = 400;
+                error.details = errors.array();
+
+                return next(error);
+            }
+            
+            const user = await User.findByIdAndUpdate(editedUser.id, {
+                username: req.body.username
+            }, {new: true}).select('-password')
+            
+            return res.status(200).json({message: 'Usuário atualizado', user})
+        } catch (err) {
+            next(err)
+        }
+    }
+])
+
 module.exports = router;
