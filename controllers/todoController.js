@@ -101,3 +101,17 @@ exports.delete = async(req, res, next) => {
         next(err)
     }
 }
+
+exports.toggleDone = async (req, res, next) => {
+    try {
+        const todo = await Todo.findById(req.params.todoId);
+
+        // Alterna o valor de done para ser o oposto
+        todo.done = !todo.done;
+        await todo.save();
+
+        return res.status(200).json({ message: `Todo ${todo.done ? 'completa' : 'incompleta'}`, todo });
+    } catch (err) {
+        next(err);
+    }
+};

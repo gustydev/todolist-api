@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const TodoSchema = new Schema({
     name: {type: String, required: true, minLength: 4, maxLength: 50},
     description: {type: String, required: true, maxLength: 200},
-    done: {type: String, required: true, default: false},
+    done: {type: Boolean, required: true, default: false},
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
     createdAt: { type: Date, default: Date.now }
 })
