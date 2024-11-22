@@ -61,6 +61,7 @@ router.post('/register', [
     }
 ]);
 
+// Faz login e retorna um JWT pra autenticação/autorização
 router.post('/login', [
     body('username')
     .isString()
