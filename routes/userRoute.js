@@ -153,7 +153,7 @@ router.put('/', [
     async(req, res, next) => {
         try {
             const token = req.headers['authorization']?.split(' ')[1];
-            // Extrai o token da header Authorization
+            // Extrai apenas o token da header Authorization
 
             if (!token) return next('Token inválido')
             // Se for inválido retornar erro
@@ -186,5 +186,28 @@ router.put('/', [
         }
     }
 ])
+
+// Apaga o usuário autenticado e todas as suas tarefas
+router.delete('/', async(req, res, next) => {
+    try {
+        const token = req.headers['authorization']?.split(' ')[1];
+
+        if (!token) return next('Token inválido')
+
+        let deletedUser;
+        jwt.verify(token, process.env.SECRET, (err, user) => {
+            if (err) {
+                return next(err)
+            }
+            deletedUser = user;
+        })
+
+        const user = await User.findByIdAndDelete(deletedUser.id)
+
+        return res.status(200).json({message: 'Usuário apagado', user})
+    } catch (err) {
+        next(err)
+    }
+})
 
 module.exports = router;
