@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
+const Todo = require('../models/todo');
+
 const { body } = require('express-validator');
 
 const { validateInputs } = require('../middlewares/validateInputs');
@@ -150,6 +152,7 @@ exports.edit = [
 exports.delete = async(req, res, next) => {
     try {
         const user = await User.findByIdAndDelete(req.user.id).select('-password')
+        await Todo.deleteMany({author: req.user.id})
 
         return res.status(200).json({message: 'Usuário apagado', user})
     } catch (err) {

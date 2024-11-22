@@ -3,6 +3,7 @@ require('mongoose')
 
 const { validateInputs } = require('../middlewares/validateInputs');
 const Todo = require("../models/todo");
+const User = require('../models/user')
 
 const { body } = require('express-validator');
 
@@ -36,6 +37,12 @@ exports.create = [
     async(req, res, next) => {
         try {
             const todo = await Todo.create({...req.body, author: req.user.id})
+
+            const user = await User.findById(req.user.id)
+
+            // Salvando todo nos dados do usuário
+            user.todos.push(todo);
+            await user.save()
 
             return res.status(200).json(todo)
         } catch (err) {
@@ -80,15 +87,16 @@ exports.edit = [
 
 exports.delete = async(req, res, next) => {
     try {
-        const todoToBeDeleted = await Todo.findById(req.params.todoId)
+        const todo = await Todo.findOneAndDelete({
+            _id: req.params.todoId,
+            author: req.user.id
+        });
 
-        if (!todoToBeDeleted.author.equals(req.user.id)) {
-            return res.status(403).json({message: 'Proibido deletar uma todo alheia'})
+        if (!todo) {
+            return res.status(403).json({message: 'Proibido deletar uma todo alheia ou todo não encontrada'});
         }
 
-        const todo = await Todo.findByIdAndDelete(req.params.todoId)
-
-        res.status(200).json({message: 'Todo apagada', todo})
+        res.status(200).json({message: 'Todo apagada', todo});
     } catch (err) {
         next(err)
     }
